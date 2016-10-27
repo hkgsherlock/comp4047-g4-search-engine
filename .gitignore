@@ -10,3 +10,29 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# NetBeans
+/build.xml
+/nbproject
+/dist
+
+# IntelliJ IDEA
+/.idea
+/out
+/*.iml
+
+# Maven out & debug
+/target
+/temp
+
+# debug files
+/set.ini
+/bookmarkList.dat
+/downloadList.dat
+/recordList.dat
+/ErrorRecord
+output
+
+#bak file
+/src/test/java/jcomicdownloader/*.bak
+down
