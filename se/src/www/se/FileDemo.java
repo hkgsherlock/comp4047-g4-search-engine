@@ -54,7 +54,9 @@ public class FileDemo {
         }
     }
 
-
+    /**
+     * Test entry point for this particular single module
+     */
     public static void main(String[] args) throws IOException {
         String fileName = "example.txt";
         String text = "Example File\n" +

@@ -2,10 +2,7 @@ package se;
 
 import org.jsoup.Jsoup;
 
-import java.io.*;
-
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Document.OutputSettings;
 
 import java.util.LinkedList;
 
@@ -22,10 +19,19 @@ public class Crawler {
     }
 
     public void start() {
+        /* TODO: check if html has meta, and check if it contains
+            <META http-equiv="refresh" content="0;URL=http://www.hkbu.edu.hk/eng/main/index.jsp">
+            and to get the url={url} by RegEx, sth like:
+                String meta_refresh_content = jsoup.query("meta[http-equiv=refresh]").attr("content");
+                Regex regex_iri = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+                String meta_refresh_url = regex_iri.match(meta_refresh_content)[0]; // http://stackoverflow.com/questions/161738
+            and to check the meta_refresh_url again -- charles
+         */
+        // TODO: move crawling of a url using new function instead of writing on start() directly -- charles
+
         FileDemo fd = new FileDemo();
         String firstIn = urlPool.get(0);
         String fileName = firstIn.substring(firstIn.indexOf(".") + 1, firstIn.indexOf(".", firstIn.indexOf(".") + 1));
-        ;
         String linkString = "";
         Document doc = Jsoup.parse(urlPool.get(0));
         for (int i = 0; i < urlPool.size(); i++) {
@@ -33,12 +39,12 @@ public class Crawler {
             HttpDemo hd = new HttpDemo();
             String fileText;
             if (!isJsp) {
-                fileText = hd.get(urlPool.get(i));
+                fileText = hd.getTextual(urlPool.get(i));
                 linkString += "" + (i + 1) + ": " + urlPool.get(i) + "\n"   //adding http link as result
                         + hd.getFirstLine(urlPool.get(i)) + "\n";  //adding first line as a keyword
             } else {
-                //fileText=hd.getJsp(urlPool.get(i));
-                fileText = hd.get(urlPool.get(i));
+                //fileText=hd.getJsp(urlPool.getTextual(i));
+                fileText = hd.getTextual(urlPool.get(i));
             }
             int lastIndex = 0;
             lastIndex = fileText.indexOf("URL");
@@ -56,6 +62,9 @@ public class Crawler {
         fd.write(fileName, linkString);
     }
 
+    /**
+     * test entry point for craeling http://www.hkbu.edu.hk
+     */
     public static void main(String[] args) {
         // force test code
         Crawler craw = new Crawler("http://www.hkbu.edu.hk", 100, 10);
