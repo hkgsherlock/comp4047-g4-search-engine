@@ -11,7 +11,7 @@ import java.util.LinkedList;
  * Created by YI Peipei on 8/19/2016.
  */
 public class Crawler {
-    LinkedList<String> urlPool = new LinkedList<>();
+    LinkedList<String> urlPool = new LinkedList<String>();
     int Y = -1;
     int X = -1;
 
