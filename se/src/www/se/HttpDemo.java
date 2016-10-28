@@ -19,18 +19,17 @@ public class HttpDemo {
      *
      * @param url
      */
-    public String get(String url) {
-        String s="";
+    public String getTextual(String url) {
+//        StringBuilder sb = new StringBuilder();
+        String s = "";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             InputStream is = conn.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            String line = br.readLine();
-            while (line != null) {
-                System.out.println(line);
-                line = br.readLine();
-                s+=line;
+            String line;
+            while ((line = br.readLine()) != null) {
+                s += line + "\r\n";
             }
 
             return s;
@@ -41,13 +40,13 @@ public class HttpDemo {
     }
 
     public String getFirstLine(String url) {
-        String s="";
+        String s = "";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             InputStream is = conn.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line = br.readLine();
-            s+=line;
+            s += line;
             return s;
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,9 +55,10 @@ public class HttpDemo {
     }
 
     public static void main(String[] args) {
-        String url = "http://example.com/";
+        String url = "http://hkgsherlock.github.io/";
 
         HttpDemo httpDemo = new HttpDemo();
-        httpDemo.get(url);
+        String response = httpDemo.getTextual(url);
+        System.out.println(response);
     }
 }
