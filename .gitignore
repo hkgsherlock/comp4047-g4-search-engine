@@ -36,3 +36,4 @@ output
 #bak file
 /src/test/java/jcomicdownloader/*.bak
 down
+/se/.idea
