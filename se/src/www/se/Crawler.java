@@ -1,6 +1,10 @@
 package se;
 
+import org.jsoup.Jsoup;
+
 import java.io.*;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
 import java.util.LinkedList;
 
 /**
@@ -22,6 +26,7 @@ public class Crawler {
         String firstIn=urlPool.get(0);
         String fileName=firstIn.substring(firstIn.indexOf(".")+1,firstIn.indexOf(".",firstIn.indexOf(".")+1));;
         String linkString="";
+        Document doc= Jsoup.parse(urlPool.get(0));
         for(int i=0;i<urlPool.size();i++){
             boolean isJsp=urlPool.get(i).substring(urlPool.get(i).length()-3,urlPool.get(i).length()-1)=="jsp";
             HttpDemo hd=new HttpDemo();
@@ -31,8 +36,8 @@ public class Crawler {
                 linkString += "" + (i + 1) + ": " + urlPool.get(i) + "\n"   //adding http link as result
                         + hd.getFirstLine(urlPool.get(i)) + "\n";  //adding first line as a keyword
             }else{
-                fileText=hd.getJsp(urlPool.get(i));
-
+                //fileText=hd.getJsp(urlPool.get(i));
+                fileText= hd.get(urlPool.get(i));
             }
             int lastIndex=0;
             lastIndex=fileText.indexOf("URL");

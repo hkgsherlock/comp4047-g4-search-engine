@@ -17,10 +17,10 @@ public class HttpDemo {
     /**
      * Retrieve html file of given url.
      *
-     * @param url The URL (address) of the web site to crawl.
+     * @param url
      */
     public String get(String url) {
-        String s = "";
+        String s="";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             InputStream is = conn.getInputStream();
@@ -30,7 +30,7 @@ public class HttpDemo {
             while (line != null) {
                 System.out.println(line);
                 line = br.readLine();
-                s += line;
+                s+=line;
             }
 
             return s;
@@ -41,13 +41,13 @@ public class HttpDemo {
     }
 
     public String getFirstLine(String url) {
-        String s = "";
+        String s="";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             InputStream is = conn.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line = br.readLine();
-            s += line;
+            s+=line;
             return s;
         } catch (IOException e) {
             e.printStackTrace();
