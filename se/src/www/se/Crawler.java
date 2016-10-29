@@ -19,9 +19,10 @@ import java.util.regex.Pattern;
  */
 public class Crawler {
     Queue<String> urlPool = new LinkedList<String>();
+    Result result=new Result();
+    static String searchKeyword="";
     int Y = -1;
     int X = -1;
-
     /**
      * To crawl a web page with its &lt;a&gt; URLs with specified recursion level and minimum number of results.
      *
@@ -39,57 +40,63 @@ public class Crawler {
         // TODO: move crawling of a url using new function instead of writing on start() directly -- charles
 
         FileDemo fd = new FileDemo();
-
-        /*
-        String firstIn = urlPool.get(0);
-        String fileName = firstIn.substring(firstIn.indexOf(".") + 1, firstIn.indexOf(".", firstIn.indexOf(".") + 1));
-        String linkString = "";
-        Document doc = Jsoup.parse(urlPool.get(0));
-        for (int i = 0; i < urlPool.size(); i++) {
-            boolean isJsp = urlPool.get(i).substring(urlPool.get(i).length() - 3, urlPool.get(i).length() - 1) == "jsp";
-            HttpDemo hd = new HttpDemo();
-            String fileText;
-            if (!isJsp) {
-                fileText = hd.getTextual(urlPool.get(i));
-                linkString += "" + (i + 1) + ": " + urlPool.get(i) + "\n"   //adding http link as result
-                        + hd.getFirstLine(urlPool.get(i)) + "\n";  //adding first line as a keyword
-            } else {
-                //fileText=hd.getJsp(urlPool.getTextual(i));
-                fileText = hd.getTextual(urlPool.get(i));
-            }
-            int lastIndex = 0;
-            lastIndex = fileText.indexOf("URL");
-            System.out.println("The First Last Index: " + lastIndex);
-            while (lastIndex != -1) {
-                String newLink = fileText.substring(lastIndex + 1, fileText.indexOf("\"", lastIndex + 1));
-                System.out.println("The Value Of New Link: " + newLink);
-                urlPool.add(newLink);
-                lastIndex = fileText.indexOf("\"", lastIndex) - 1;
-                System.out.println("The Second Last Index: " + lastIndex);
-                lastIndex = fileText.indexOf("Url", lastIndex);
-                System.out.println("The Third Last Index: " + lastIndex);
-            }
-        }
-        */
-
         try {
             URL urlFirstPage = new URL(urlPool.poll());
 
             String fileName = urlFirstPage.getHost().replace('.', '_'); // www_hkbu_edu_hk
 
             Document docFirstPage = this.getFirstPage(urlFirstPage);
+            addToResultUrl(fetchUrlsInAElementsFromDocument(docFirstPage,X));
 
 
-
-
-            fd.write(fileName, linkString);
+            fd.write(fileName, result.resultString());
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+    private void addToResultUrl(URL[] urls) throws  IOException{
+        for(URL url:urls){
+            if(result.url.indexOf(url)==-1){ //if the url is not repeated
+                result.url.add(url);
+                Document doc= getFirstPage(url);
+                result.keyword.add(fetchMetaKeywordContent(doc)+"\n"+fetchTextualDataAsKeywords(doc));
+                result.ranking.add(countingRanking(doc,searchKeyword));
+            }
+        }
+    }
+    private String countingRanking(Document doc,String searchKeyword)throws IOException{
+        int score=0;
+        Elements paragraphs = doc.select("p");
+        //if there are containing keyword in paragraphs add 3 score
+        for(Element p : paragraphs){
+            if(p.toString().indexOf(searchKeyword)!=-1){
+                score+=3;
+            }
+        }
+        //if the folder of the url containing keyword add 30 score
+        String pathOfWeb=doc.baseUri().substring(doc.baseUri().indexOf("/")+2).toString();
+        pathOfWeb=pathOfWeb.substring(pathOfWeb.indexOf("/"));
+        if(pathOfWeb.indexOf(searchKeyword)!=-1){
+            score+=30;
+        }
+        //if the domain name and url containing keyword add 20 score
+        if(doc.baseUri().substring(doc.baseUri().indexOf("/")+1).toString().indexOf(searchKeyword)!=-1){
+            score+=20;
+        }
+        if(score>80){
+            return "A";
+        }else if(score>=70){
+            return "B";
+        }else if(score>=60){
+            return "C";
+        }else if(score>=40){
+            return "D";
+        }else if(score>=20){
+            return "E";
+        }else return "F";
+    }
     private Document getFirstPage(String urlString) throws IOException {
         return this.getFirstPage(new URL(urlString));
     }
@@ -164,8 +171,8 @@ public class Crawler {
         return (URL[]) urls.toArray();
     }
 
-    private void fetchTextualDataAsKeywords(Document doc) {
-
+    private String fetchTextualDataAsKeywords(Document doc) {
+        return doc.body().text().substring(0,100)+"...";
     }
 
     private String fetchMetaKeywordContent(Document doc) {
@@ -188,15 +195,13 @@ public class Crawler {
      * test entry point for craeling http://www.hkbu.edu.hk
      */
     public static void main(String[] args) {
-        // force test code
-        Crawler craw = new Crawler("http://www.hkbu.edu.hk", 100, 10);
-        craw.start();
-        /**/
-        if (0 == args.length) {
+        /*if (0 == args.length) {
             System.exit(-1);
         }
+        searchKeyword=args[0];*/
+        searchKeyword="test";
 
-        String start_url = null;
+        String start_url = "http://www.hkbu.edu.hk/eng/main/index.jsp";
         int Y = -1;
         int X = -1;
         if (1 <= args.length) {
