@@ -48,7 +48,6 @@ public class Crawler {
             Document docFirstPage = this.getFirstPage(urlFirstPage);
             addToResultUrl(fetchUrlsInAElementsFromDocument(docFirstPage,X));
 
-
             fd.write(fileName, result.resultString());
 
 
