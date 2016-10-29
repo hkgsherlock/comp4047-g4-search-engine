@@ -25,15 +25,7 @@ hs_err_pid*
 /target
 /temp
 
-# debug files
-/set.ini
-/bookmarkList.dat
-/downloadList.dat
-/recordList.dat
-/ErrorRecord
-output
-
-#bak file
-/src/test/java/jcomicdownloader/*.bak
-down
+# project specific
 /se/.idea
+/se/tmp
+/se/fetched
