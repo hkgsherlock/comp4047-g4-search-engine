@@ -9,119 +9,109 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Crawler is a class to do grabbing of all necessary urls from a url.
  */
 public class Crawler {
-    Queue<String> urlPool = new LinkedList<String>();
-    Result result=new Result();
-    static String searchKeyword="";
-    int Y = -1;
-    int X = -1;
+    private String strUrlFrom;
+    private Result result = new Result();
+    private static String searchKeyword = "";
+    private int minNumResults = -1;
+    private int recursionPagesLimit = -1;
+
     /**
      * To crawl a web page with its &lt;a&gt; URLs with specified recursion level and minimum number of results.
      *
-     * @param url The URL of web page to crawl.
-     * @param Y   The minimum number of results.
-     * @param X   How many recursion to run on crawled URLs from the first web page.
+     * @param urlString           The URL of web page to crawl.
+     * @param minNumResults       The minimum number of results.
+     * @param recursionPagesLimit How many recursion to run on crawled URLs from the first web page.
      */
-    public Crawler(String url, int Y, int X) {
-        urlPool.offer(url);
-        this.Y = Y;
-        this.X = X;
+    public Crawler(String urlString, int minNumResults, int recursionPagesLimit) {
+        this.strUrlFrom = urlString;
+        this.minNumResults = minNumResults;
+        this.recursionPagesLimit = recursionPagesLimit;
     }
 
+    // TODO: if there's a start() there must be a threading thing -- nice bro @yipeipei (y)
     public void start() {
-        // TODO: move crawling of a url using new function instead of writing on start() directly -- charles
-
-        FileDemo fd = new FileDemo();
+        FileIO fd = new FileIO();
         try {
-            URL urlFirstPage = new URL(urlPool.poll());
+            URL urlFirstPage = new URL(strUrlFrom);
 
             String fileName = urlFirstPage.getHost().replace('.', '_'); // www_hkbu_edu_hk
 
             Document docFirstPage = this.getFirstPage(urlFirstPage);
-            addToResultUrl(fetchUrlsInAElementsFromDocument(docFirstPage,X));
+            addToResultUrl(fetchUrlsInAElementsFromDocument(docFirstPage, recursionPagesLimit));
 
             fd.write(fileName, result.resultString());
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void addToResultUrl(URL[] urls) throws  IOException{
-        for(URL url:urls){
-            if(result.url.indexOf(url)==-1){ //if the url is not repeated
+
+    private void addToResultUrl(URL[] urls) throws IOException {
+        for (URL url : urls) {
+            // TODO: no this fuck shit
+            if (result.url.indexOf(url) == -1) { //if the url is not repeated
                 result.url.add(url);
-                Document doc= getFirstPage(url);
-                result.keyword.add(fetchMetaKeywordContent(doc)+"\n"+fetchTextualDataAsKeywords(doc));
-                result.ranking.add(countingRanking(doc,searchKeyword));
+                Document doc = getFirstPage(url);
+                result.keyword.add(fetchMetaKeywordContent(doc) + "\n" + fetchTextualDataAsKeywords(doc));
+                result.ranking.add(countingRanking(doc, searchKeyword));
             }
         }
     }
-    private String countingRanking(Document doc,String searchKeyword)throws IOException{
-        int score=0;
+
+    private String countingRanking(Document doc, String searchKeyword) throws IOException {
+        int score = 0;
         Elements paragraphs = doc.select("p");
         //if there are containing keyword in paragraphs add 3 score
-        for(Element p : paragraphs){
-            if(p.toString().indexOf(searchKeyword)!=-1){
-                score+=3;
+        for (Element p : paragraphs) {
+            if (p.toString().contains(searchKeyword)) {
+                score += 3;
             }
         }
         //if the folder of the url containing keyword add 30 score
-        String pathOfWeb=doc.baseUri().substring(doc.baseUri().indexOf("/")+2).toString();
-        pathOfWeb=pathOfWeb.substring(pathOfWeb.indexOf("/"));
-        if(pathOfWeb.indexOf(searchKeyword)!=-1){
-            score+=30;
+        String pathOfWeb = doc.baseUri().substring(doc.baseUri().indexOf("/") + 2);
+        pathOfWeb = pathOfWeb.substring(pathOfWeb.indexOf("/"));
+        if (pathOfWeb.contains(searchKeyword)) {
+            score += 30;
         }
         //if the domain name and url containing keyword add 20 score
-        if(doc.baseUri().substring(doc.baseUri().indexOf("/")+1).toString().indexOf(searchKeyword)!=-1){
-            score+=20;
+        if (doc.baseUri().substring(doc.baseUri().indexOf("/") + 1).contains(searchKeyword)) {
+            score += 20;
         }
-        if(score>80){
+        if (score > 80) {
             return "A";
-        }else if(score>=70){
+        } else if (score >= 70) {
             return "B";
-        }else if(score>=60){
+        } else if (score >= 60) {
             return "C";
-        }else if(score>=40){
+        } else if (score >= 40) {
             return "D";
-        }else if(score>=20){
+        } else if (score >= 20) {
             return "E";
-        }else return "F";
+        } else return "F";
     }
+
     private Document getFirstPage(String urlString) throws IOException {
         return this.getFirstPage(new URL(urlString));
     }
 
     private Document getFirstPage(URL url) throws IOException {
-        /* TODO: check if html has meta, and check if it contains
-                <META http-equiv="refresh" content="0;URL=http://www.hkbu.edu.hk/eng/main/index.jsp">
-            and to get the url={url} by RegEx, sth like:
-                String meta_refresh_content = jsoup.query("meta[http-equiv=refresh]").attr("content");
-                Regex regex_iri = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
-                String meta_refresh_url = regex_iri.match(meta_refresh_content)[0]; // http://stackoverflow.com/questions/161738
-            and to check the meta_refresh_url again -- charles
-         */
-
         Document startingPage = this.getPage(url);
 
         // check if it contains meta:refresh AND with new page url
         Elements eleMetaRefresh = startingPage.select("meta[http-equiv=refresh]");
         if (eleMetaRefresh.size() > 0) {
-            String[] contentDatas = startingPage.attr("content").split("; *");
+            String[] contentDatas = eleMetaRefresh.attr("content").split("; *");
             for (String e : contentDatas) {
                 String[] kv = e.split(" *= *");
+                if (kv.length < 2) continue;
                 String key = kv[0];
                 String value = kv[1];
                 if (key.toLowerCase().equals("url")) {
-                    return getFirstPage(url);
+                    return getFirstPage(value);
                 }
             }
         }
@@ -138,7 +128,7 @@ public class Crawler {
     }
 
     private URL[] fetchUrlsInAElementsFromDocument(Document doc) {
-        return fetchUrlsInAElementsFromDocument(doc, -1);
+        return fetchUrlsInAElementsFromDocument(doc, 0);
     }
 
     private URL[] fetchUrlsInAElementsFromDocument(Document doc, int maxResults) {
@@ -163,15 +153,15 @@ public class Crawler {
                 e.printStackTrace();
             }
 
-            if (fetchedCount > -1 && fetchedCount > maxResults)
-                return (URL[]) urls.toArray();
+            if (maxResults > 0 && fetchedCount > maxResults)
+                break;
         }
 
-        return (URL[]) urls.toArray();
+        return urls.toArray(new URL[urls.size()]);
     }
 
     private String fetchTextualDataAsKeywords(Document doc) {
-        return doc.body().text().substring(0,100)+"...";
+        return doc.body().text().substring(0, 100) + "...";
     }
 
     private String fetchMetaKeywordContent(Document doc) {
@@ -198,9 +188,10 @@ public class Crawler {
             System.exit(-1);
         }
         searchKeyword=args[0];*/
-        searchKeyword="test";
+        searchKeyword = "test";
 
-        String start_url = "http://www.hkbu.edu.hk/eng/main/index.jsp";
+//        String start_url = "http://www.hkbu.edu.hk/eng/main/index.jsp";
+        String start_url = "http://www.hkbu.edu.hk";
         int Y = -1;
         int X = -1;
         if (1 <= args.length) {

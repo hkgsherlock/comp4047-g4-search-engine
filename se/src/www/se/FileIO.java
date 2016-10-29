@@ -7,7 +7,7 @@ import java.io.*;
  * <p/>
  * Created by YI Peipei on 8/19/2016.
  */
-public class FileDemo {
+public class FileIO {
     /**
      * Write lines to a file (create it if not exists).
      *
@@ -63,7 +63,7 @@ public class FileDemo {
                 "\n" +
                 "This file is created to illustrate basic file operations.\n";
 
-        FileDemo fileDemo = new FileDemo();
+        FileIO fileDemo = new FileIO();
         System.out.println("### Write lines to a file.");
         fileDemo.write(fileName, text);
         System.out.println("### Read lines from a file.");
