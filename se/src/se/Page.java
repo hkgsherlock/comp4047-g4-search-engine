@@ -221,7 +221,7 @@ public class Page {
         return pk;
     }
 
-    public Collection<Keyword> generateKeywordsAndCountScore() {
+    public Collection<Keyword> generateKeywordsAndCountScore(){
         HashMap<String, Keyword> keywords = new HashMap<>();
 
         PageKeywords pageKeywords = generateKeywords();
@@ -240,18 +240,15 @@ public class Page {
             KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
             keywordUrl.addAll(kusp.values());
             keyword.addKeywordUrl(keywordUrl);
-            String description=getDescription(keywordUrl.toString());
-            keyword.addDescription(description);
+            keywordUrl.description=getDescription(keyword.keyword);
         }
 
         KeywordsStorage.INSTANCE.putAll(keywords.values());
         return keywords.values();
     }
 
-    private String getDescription(String url){
-        Document doc=Jsoup.parse(url);
-        String s=doc.body().attr("p");
-        return s;
+    private String getDescription(String keyword){
+        return doc.body().text(); //// TODO: 2016/10/31 find the keyword
     }
 
     private int _countScore(String searchKeyword) {

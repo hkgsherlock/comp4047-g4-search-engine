@@ -28,7 +28,7 @@ public class KeywordsStorage {
             }
         for (final java.io.File fileEntry : keywordsDir.listFiles()) {
             try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
-                put((Keyword) ois.readObject());
+                put((Keyword) ois.readObject()); // TODO: 2016/10/31 ClassNotFoundExceprion
             } catch (FileNotFoundException fe) {
             } catch (IOException e) {
                 e.printStackTrace();

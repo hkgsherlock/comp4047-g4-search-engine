@@ -21,10 +21,6 @@ public class Keyword implements Serializable {
         keywordUrls.sort(KeywordUrl::compare);
     }
 
-    void addDescription(String description){
-        this.description=description;
-    }
-
     void addKeywordUrl(KeywordUrl keywordUrl) {
         int idx = keywordUrls.indexOf(keywordUrl);
         if (idx > -1)
@@ -47,7 +43,7 @@ public class Keyword implements Serializable {
         int count=0;
         for(KeywordUrl k: keywordUrls){
             count++;
-            System.out.println(""+count+" :"+k.url+"\n"+description);
+            System.out.println(""+count+" :"+k.url+"\n"+k.description);
         }
 
     }
