@@ -1,12 +1,13 @@
 package se;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Keyword implements Serializable {
     String keyword;
     LinkedList<KeywordUrl> keywordUrls;
+    String description;
 
     public Keyword(String keyword) {
         this.keyword = keyword;
@@ -18,6 +19,10 @@ public class Keyword implements Serializable {
             addKeywordUrl(ku);
         }
         keywordUrls.sort(KeywordUrl::compare);
+    }
+
+    void addDescription(String description){
+        this.description=description;
     }
 
     void addKeywordUrl(KeywordUrl keywordUrl) {
@@ -36,5 +41,14 @@ public class Keyword implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return obj.getClass() == this.getClass() && this.keyword.equals(((Keyword) obj).keyword);
+    }
+
+    public void print(){
+        int count=0;
+        for(KeywordUrl k: keywordUrls){
+            count++;
+            System.out.println(""+count+" :"+k.url+"\n"+description);
+        }
+
     }
 }

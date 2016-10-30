@@ -1,6 +1,6 @@
 package se;
 
-import java.net.URL;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Created by YI Peipei on 8/19/2016.
  */
 public class SearchServer {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         System.out.print("Content-type: text/html\n\n");
         System.out.print("<title>CGI Test from Java</title>\n");
         System.out.print("<p>Hello World!</p>\n");
@@ -17,6 +17,6 @@ public class SearchServer {
         System.out.print("testing");
         Crawler crawler = new Crawler("http://hkbu.edu.hk/eng/main/index/jsp", 100, 10);
         crawler.start();
-        KeywordsStorage.INSTANCE.get(args[0]); // TODO: tostring -- leo
+        KeywordsStorage.INSTANCE.get("About").print();
     }
 }

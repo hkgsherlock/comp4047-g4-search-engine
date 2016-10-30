@@ -240,10 +240,18 @@ public class Page {
             KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
             keywordUrl.addAll(kusp.values());
             keyword.addKeywordUrl(keywordUrl);
+            String description=getDescription(keywordUrl.toString());
+            keyword.addDescription(description);
         }
 
         KeywordsStorage.INSTANCE.putAll(keywords.values());
         return keywords.values();
+    }
+
+    private String getDescription(String url){
+        Document doc=Jsoup.parse(url);
+        String s=doc.body().attr("p");
+        return s;
     }
 
     private int _countScore(String searchKeyword) {
