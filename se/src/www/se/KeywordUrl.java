@@ -19,17 +19,17 @@ public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
     }
 
     public void add(KeywordUrlSourcePositions value) {
-        this.sources.add(value);
+        int idx = sources.indexOf(value);
+        if (idx > -1) {
+            sources.get(idx).addAll(value.positions);
+        } else {
+            sources.add(value);
+        }
     }
 
     public void addAll(Collection<KeywordUrlSourcePositions> values) {
         for (KeywordUrlSourcePositions v : values) {
-            int idx = sources.indexOf(v);
-            if (idx > -1) {
-                sources.get(idx).addAll(v.positions);
-            } else {
-                sources.add(v);
-            }
+            add(v);
         }
     }
 

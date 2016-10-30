@@ -1,7 +1,6 @@
 package se;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,18 +15,22 @@ public class Keyword implements Serializable {
 
     void addKeywordUrls(List<KeywordUrl> keywordUrls) {
         for (KeywordUrl ku : keywordUrls) {
-            int idx = keywordUrls.indexOf(ku);
-            if (idx > -1)
-                keywordUrls.get(idx).addAll(ku.sources);
-            else
-                keywordUrls.add(ku);
+            addKeywordUrl(ku);
         }
         keywordUrls.sort(KeywordUrl::compare);
     }
 
     void addKeywordUrl(KeywordUrl keywordUrl) {
-        keywordUrls.add(keywordUrl);
+        int idx = keywordUrls.indexOf(keywordUrl);
+        if (idx > -1)
+            keywordUrls.get(idx).addAll(keywordUrl.sources);
+        else
+            keywordUrls.add(keywordUrl);
         keywordUrls.sort(KeywordUrl::compare);
+    }
+
+    LinkedList<KeywordUrl> getAll() {
+        return keywordUrls;
     }
 
     @Override

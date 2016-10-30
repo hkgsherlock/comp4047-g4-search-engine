@@ -2,6 +2,7 @@ package se;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -15,7 +16,6 @@ public class KeywordsStorage {
         this.keywords = new HashMap<>();
         this._removedYetDeleted = new HashSet<>();
 
-        // TODO: load from file
         for (final java.io.File fileEntry : Paths.get(System.getProperty("user.dir"), "keywords").toFile().listFiles()) {
             try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
                 put((Keyword) ois.readObject());
@@ -43,7 +43,16 @@ public class KeywordsStorage {
     }
 
     public void put(Keyword keyword) {
-        this.keywords.put(keyword.keyword, keyword);
+        if (keywords.containsKey(keyword.keyword)) {
+            this.keywords.get(keyword.keyword).addKeywordUrls(keyword.getAll());
+        } else {
+            this.keywords.put(keyword.keyword, keyword);
+        }
+    }
+
+    public void putAll(Collection<Keyword> keywords) {
+        for (Keyword k : keywords)
+            put(k);
     }
 
     public Keyword get(String keywordString) {

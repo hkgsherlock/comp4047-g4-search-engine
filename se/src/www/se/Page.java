@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Page {
     private static final int DEFAULT_TIMEOUT = 30000;
@@ -223,24 +220,29 @@ public class Page {
         return pk;
     }
 
-    // TODO: return Set<Keyword>?
-    public Set<Keyword> generateKeywordsAndCountScore() {
-        HashSet<Keyword> keywords = new HashSet<>();
+    public Collection<Keyword> generateKeywordsAndCountScore() {
+        HashMap<String, Keyword> keywords = new HashMap<>();
 
         PageKeywords pageKeywords = generateKeywords();
         HashMap<String, KeywordUrlSourcePositions> kusp = pageKeywords.convertToKeywordSourcePositions();
         for (String kw : pageKeywords.getAllKeywords()) {
             int score = _countScore(kw);
 
-            Keyword keyword = new Keyword(kw);
+            Keyword keyword;
+            if (!keywords.containsKey(kw)) {
+                keyword = keywords.get(kw);
+            } else {
+                keyword = new Keyword(kw);
+                keywords.put(kw, keyword);
+            }
+
             KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
             keywordUrl.addAll(kusp.values());
             keyword.addKeywordUrl(keywordUrl);
-            keywords.add(keyword);
         }
 
-        // TODO: store into keyword storage?
-        return keywords;
+        KeywordsStorage.INSTANCE.putAll(keywords.values());
+        return keywords.values();
     }
 
     private int _countScore(String searchKeyword) {
