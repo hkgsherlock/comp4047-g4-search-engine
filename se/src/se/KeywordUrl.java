@@ -49,4 +49,9 @@ public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
         int y = o2.score;
         return (x > y) ? -1 : ((x == y) ? 0 : 1);
     }
+
+    @Override
+    public String toString() {
+        return "{url=" + url + ", score=" + score + ", description=" + description + ", sources=" + sources.toString() + "}";
+    }
 }

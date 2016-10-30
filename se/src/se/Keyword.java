@@ -7,7 +7,6 @@ import java.util.List;
 public class Keyword implements Serializable {
     String keyword;
     LinkedList<KeywordUrl> keywordUrls;
-    String description;
 
     public Keyword(String keyword) {
         this.keyword = keyword;
@@ -46,5 +45,10 @@ public class Keyword implements Serializable {
             System.out.println(""+count+" :"+k.url+"\n"+k.description);
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "{[Keyword] keyword=" + keyword + ", keywordUrls=" + keywordUrls.toString() + "}";
     }
 }

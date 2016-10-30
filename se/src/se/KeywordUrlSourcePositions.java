@@ -1,5 +1,7 @@
 package se;
 
+import com.sun.deploy.util.StringUtils;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,7 +17,12 @@ public class KeywordUrlSourcePositions implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return obj.getClass() == this.getClass() && this.source.equals((KeywordUrlSourcePositions)obj);
+        return obj.getClass() == this.getClass() && this.source.equals(((KeywordUrlSourcePositions)obj).source);
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "source=" + source + ", positions=[" + StringUtils.join(positions, ", ") + "]}";
     }
 
     public void add(int value) {
