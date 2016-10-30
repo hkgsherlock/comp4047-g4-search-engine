@@ -2,7 +2,6 @@ package se;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,16 +16,14 @@ public class KeywordsStorage {
     private KeywordsStorage() {
         this.keywords = new HashMap<>();
         this._removedYetDeleted = new HashSet<>();
-
-        String startDir = System.getProperty("user.dir");
-        java.io.File keywordsDir = Paths.get(startDir, "keywords").toFile();
-        if (!keywordsDir.exists())
+        java.io.File keywordFolder = getKeywordFolder();
+        if (!keywordFolder.exists())
             try {
-                Files.createDirectory(keywordsDir.toPath());
+                Files.createDirectory(keywordFolder.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        for (final java.io.File fileEntry : keywordsDir.listFiles()) {
+        for (final java.io.File fileEntry : keywordFolder.listFiles()) {
             try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
                 put((Keyword) ois.readObject()); // TODO: 2016/10/31 ClassNotFoundExceprion
             } catch (FileNotFoundException fe) {
@@ -36,6 +33,11 @@ public class KeywordsStorage {
                 e.printStackTrace();
             }
         }
+    }
+
+    private java.io.File getKeywordFolder() {
+        String startDir = System.getProperty("user.dir");
+        return Paths.get(startDir, "keywords").toFile();
     }
 
     public void sync() throws IOException {
@@ -67,6 +69,7 @@ public class KeywordsStorage {
     }
 
     public Keyword get(String keywordString) {
+        keywordString = keywordString.toLowerCase();
         return this.keywords.get(keywordString);
     }
 
@@ -75,5 +78,17 @@ public class KeywordsStorage {
             return null;
         _removedYetDeleted.add(keywordString);
         return this.keywords.remove(keywordString);
+    }
+
+    public void invalidate() {
+        this._removedYetDeleted.clear();
+        this.keywords.clear();
+
+        java.io.File keywordFolder = this.getKeywordFolder();
+        if (!keywordFolder.exists()) return;
+
+        for (final java.io.File fileEntry : keywordFolder.listFiles()) {
+            fileEntry.delete();
+        }
     }
 }
