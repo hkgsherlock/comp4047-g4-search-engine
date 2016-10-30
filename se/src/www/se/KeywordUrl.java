@@ -3,7 +3,7 @@ package se;
 import java.io.Serializable;
 import java.util.*;
 
-public class KeywordUrl implements Serializable {
+public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
     LinkedList<KeywordUrlSourcePositions> sources = new LinkedList<>();
     String url;
     int score;
@@ -16,11 +16,6 @@ public class KeywordUrl implements Serializable {
         this.url = url;
         this.score = score;
         this.sources = new LinkedList<>();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj.getClass() == this.getClass() && this.url.equals(((KeywordUrl) obj).url);
     }
 
     public void add(KeywordUrlSourcePositions value) {
@@ -36,5 +31,21 @@ public class KeywordUrl implements Serializable {
                 sources.add(v);
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.getClass() == this.getClass() && this.url.equals(((KeywordUrl) obj).url);
+    }
+
+    @Override
+    public int compareTo(KeywordUrl another) {
+        return compare(this, another);
+    }
+
+    public static int compare(KeywordUrl o1, KeywordUrl o2) {
+        int x = o1.score;
+        int y = o2.score;
+        return (x > y) ? -1 : ((x == y) ? 0 : 1);
     }
 }

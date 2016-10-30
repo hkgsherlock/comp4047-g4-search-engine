@@ -1,8 +1,7 @@
 package se;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -12,9 +11,21 @@ public class KeywordsStorage {
     private HashMap<String, Keyword> keywords;
     private HashSet<String> _removedYetDeleted;
 
-    public KeywordsStorage() {
+    private KeywordsStorage() {
         this.keywords = new HashMap<>();
         this._removedYetDeleted = new HashSet<>();
+
+        // TODO: load from file
+        for (final java.io.File fileEntry : Paths.get(System.getProperty("user.dir"), "keywords").toFile().listFiles()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
+                put((Keyword) ois.readObject());
+            } catch (FileNotFoundException fe) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void sync() throws IOException {

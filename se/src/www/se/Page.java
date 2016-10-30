@@ -224,7 +224,7 @@ public class Page {
     }
 
     // TODO: return Set<Keyword>?
-    public Set<Keyword> countRankingsForKeywords() {
+    public Set<Keyword> generateKeywordsAndCountScore() {
         HashSet<Keyword> keywords = new HashSet<>();
 
         PageKeywords pageKeywords = generateKeywords();
@@ -240,6 +240,7 @@ public class Page {
         }
 
         // TODO: store into keyword storage?
+        return keywords;
     }
 
     private int _countScore(String searchKeyword) {

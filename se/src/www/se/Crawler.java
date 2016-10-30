@@ -33,36 +33,30 @@ public class Crawler {
         this.recursionPagesLimit = recursionPagesLimit;
     }
 
-    // TODO: if there's a start() there must be a threading thing -- nice bro (y)
+    // NOTTODO: if there's a start() there must be a threading thing -- nice bro (y)
     public void start() {
         try {
             URL urlFirstPage = new URL(strUrlFrom);
 
-            String fileName = "";
-            {
-                LinkedList<String> host = new LinkedList<>(Arrays.asList(urlFirstPage.getHost().split("\\.")));
-                Collections.reverse(host);
-                fileName = Paths.get("fetched", host.toArray(new String[host.size()])).toString();
-            }
-            File fd = new File(fileName, true);
-
             Page firstPage = this.getFirstPage(urlFirstPage);
             addToResultUrl(firstPage.fetchUrlsInAElementsFromDocument(recursionPagesLimit));
 
-            fd.writeText(crawlResults.resultString());
+            System.out.println(crawlResults.resultString());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void addToResultUrl(URL[] urls) throws IOException {
-        Set<URL> urlSet = new HashSet<URL>(Arrays.asList(urls));
+        Set<URL> urlSet = new HashSet<>(Arrays.asList(urls));
 
         for (URL url : urlSet) {
             Page page = Page.getFromRemote(url);
             CrawlResult cr = new CrawlResult(page);
             crawlResults.put(cr);
         }
+
+        KeywordsStorage.INSTANCE.sync();
     }
 
     private Page getFirstPage(String urlString) throws IOException {

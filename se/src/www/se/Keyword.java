@@ -1,6 +1,7 @@
 package se;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,10 +22,12 @@ public class Keyword implements Serializable {
             else
                 keywordUrls.add(ku);
         }
+        keywordUrls.sort(KeywordUrl::compare);
     }
 
     void addKeywordUrl(KeywordUrl keywordUrl) {
         keywordUrls.add(keywordUrl);
+        keywordUrls.sort(KeywordUrl::compare);
     }
 
     @Override

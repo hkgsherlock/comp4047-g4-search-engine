@@ -7,15 +7,15 @@ import java.util.Set;
 
 public class CrawlResult {
     URL url;
-    Set<Keywords> keyword;
+    Set<Keyword> keyword;
 
-    public CrawlResult(URL url, Set<Keywords> keyword) {
+    public CrawlResult(URL url, Set<Keyword> keyword) {
         this.url = url;
         this.keyword = keyword;
     }
 
     public CrawlResult(Page page) {
         this.url = page.getUrl();
-        this.keyword = page.generateKeywords().getAllKeywords();
+        this.keyword = page.generateKeywordsAndCountScore();
     }
 }
