@@ -10,11 +10,9 @@ public class ProcessKeywords {
     public static ArrayList<String> fromTextual(String textual) {
         ArrayList<String> matches = new ArrayList<>();
 
-        // https://www.regex101.com/r/ncxqj1/1
-        /*
-        // TODO: describe each part of regex? -- charles
-         */
-        String regexPattern = "(\\d+\\.\\d+|[a-zA-Z0-9\\u4E00-\\u9fa5\\uE7C7-\\uE7F3])+";
+        // https://www.regex101.com/r/ncxqj1/5
+        // fetch digits, a-z, A-Z, 0-9, Japanese and Chinese(and Kanji) characters
+        String regexPattern = "[a-zA-Z0-9\\.\\u3040-\\u30ff\\u31F0-\\u31FF\\u3400-\\u9fa5]+";
         Pattern pattern = Pattern.compile(regexPattern, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(textual);
         while (matcher.find()) {
@@ -30,7 +28,8 @@ public class ProcessKeywords {
 
         ArrayList<String> keywords = fromTextual(textual);
         for (int i = 0; i < keywords.size(); i++) {
-            ret.add(keywords.get(i), i);
+            String kw = keywords.get(i);
+            ret.add(kw, i);
         }
 
         return ret;
