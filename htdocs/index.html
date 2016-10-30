@@ -4,6 +4,7 @@
 
 <head>
   <title>** COMP4047 Search Engine **</title>
+  <script src="jquery-3.1.1.min.js"></script>
 </head>
 
 <body align='center'>
@@ -15,20 +16,21 @@
         Type your query here: 
         <input list="files" type="text" name="query">
 		<datalist id="files">
-			<?php
-				$files = scandir("../se/keywords"); 
-
-				foreach($files as $file){ ?>
-					<option value="
-						<?php echo $file; ?>
-					">
-					<?
-				}
-			?>
 		</datalist>
 		
         <input type="submit" value="Search">
     </form>
 </body>
+<script type="text/javascript">
+	$(function() {
+		$.getJSON("cgi-bin/autocomplete.py", function(data) {
+			var items = [];
+			$.each( data, function(key, val) {
+				items.push( '<option value="' +  val + '">' );
+			});
+			$('datalist#files').html(items.join( "\n" ));
+		})
+	})
+</script>
 
 </html>
