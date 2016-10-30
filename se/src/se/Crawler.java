@@ -50,7 +50,7 @@ public class Crawler {
     }
 
     private void addToResultUrl(URL[] urls) throws IOException {
-        Set<URL> urlSet = new HashSet<>(Arrays.asList(urls));
+        Set<URL> urlSet = new HashSet<>(Arrays.asList(urls)); // TODO: means noting
 
         for (URL url : urlSet) {
             Page page = Page.getFromRemote(url);

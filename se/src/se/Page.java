@@ -251,7 +251,7 @@ public class Page {
         return doc.body().text(); //// TODO: 2016/10/31 find the keyword
     }
 
-    private int _countScore(String searchKeyword) {
+    private int _countScore(String searchKeyword) { // TODO: redo? all results as 0?
         int score = 0;
 
         //if there are containing keyword in paragraphs put 3 score
