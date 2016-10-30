@@ -17,7 +17,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Page {
     private static final int DEFAULT_TIMEOUT = 30000;
@@ -26,7 +28,8 @@ public class Page {
     private Document doc;
     long timeFetch = -1;
 
-    private String cacheKeywords = "";
+    private String cacheBoilerpipeText = null;
+    private String cacheJsoupWholeBodyText = null;
 
     public Page(String html) {
         this.doc = Jsoup.parse(html);
@@ -36,14 +39,18 @@ public class Page {
         this.doc = doc;
     }
 
-    public Page(String html, HttpResult HttpResult) {
+    private Page(String html, HttpResult HttpResult) {
         this.doc = Jsoup.parse(html);
         this.httpResult = HttpResult;
     }
 
-    public Page(Document doc, HttpResult httpResult) {
+    private Page(Document doc, HttpResult httpResult) {
         this.doc = doc;
         this.httpResult = httpResult;
+    }
+
+    public Page(HttpResult httpResult) throws IOException {
+        this(httpResult.readTexts(), httpResult);
     }
 
     public String getHtml() {
@@ -104,11 +111,11 @@ public class Page {
 
             // if no extraction then pass
             if (url_extracted.length() == 0 ||
-                !(url_extracted.startsWith("https://") ||
-                  url_extracted.startsWith("http://") ||
-                  url_extracted.startsWith("/") ||
-                  url_extracted.startsWith("."))
-                )
+                    !(url_extracted.startsWith("https://") ||
+                            url_extracted.startsWith("http://") ||
+                            url_extracted.startsWith("/") ||
+                            url_extracted.startsWith("."))
+                    )
                 continue;
 
             // putting url
@@ -136,12 +143,13 @@ public class Page {
         return urls.toArray(new URL[urls.size()]);
     }
 
-    private String fetchTextualDataAsKeywords() {
-        return this.doc.body().text().substring(0, 100) + "...";
+    @Deprecated
+    private String fetchMetaKeyword() {
+        return this.doc.select("meta[keywords]").attr("content");
     }
 
-    private String fetchMetaKeywordContent() {
-        return this.doc.select("meta[keywords]").attr("content");
+    private String fetchMetaDescription() {
+        return this.doc.select("meta[description]").attr("content");
     }
 
     private String[] fetchPText() {
@@ -156,37 +164,98 @@ public class Page {
         return (String[]) texts.toArray();
     }
 
+    private String fetchPageTitle() {
+        return doc.title();
+    }
+
     private String fetchWholeBodyText() {
-        return this.doc.body().text();
+        if (cacheJsoupWholeBodyText == null) {
+            cacheJsoupWholeBodyText = this.doc.body().text();
+        }
+        return cacheJsoupWholeBodyText;
     }
 
-    private String fetchTextDocumentWithBoilerpipe() throws SAXException, BoilerpipeProcessingException {
-        InputSource is = new InputSource(new ByteArrayInputStream(this.getHtml().getBytes(StandardCharsets.UTF_8)));
-        BoilerpipeSAXInput in = new BoilerpipeSAXInput(is);
-        TextDocument textDocument = in.getTextDocument();
-        return ArticleExtractor.INSTANCE.getText(textDocument);
+    public String fetchTextDocumentWithBoilerpipe() throws SAXException, BoilerpipeProcessingException {
+        if (cacheBoilerpipeText == null) {
+            InputSource is = new InputSource(new ByteArrayInputStream(this.getHtml().getBytes(StandardCharsets.UTF_8)));
+            BoilerpipeSAXInput in = new BoilerpipeSAXInput(is);
+            TextDocument textDocument = in.getTextDocument();
+            cacheBoilerpipeText = ArticleExtractor.INSTANCE.getText(textDocument);
+        }
+        return cacheBoilerpipeText;
     }
 
-    public String generateKeywords() {
-        if (cacheKeywords == null)
-            cacheKeywords = fetchMetaKeywordContent() + "\n" + fetchTextualDataAsKeywords();
-        return cacheKeywords;
+    public PageKeywords generateKeywords() {
+        PageKeywords pk = new PageKeywords();
+
+        // meta keyword -- no we don't use this anymore https://sofree.cc/meta-keywords/
+
+        // meta description
+        {
+            String metaDesc = fetchMetaDescription();
+            pk.put("Meta Description", ProcessKeywords.fromTextualWithPosition(metaDesc));
+        }
+
+        // textual data
+        {
+            String txtBoilerpipe = "";
+            try {
+                txtBoilerpipe = this.fetchTextDocumentWithBoilerpipe();
+            } catch (Exception e) {
+            }
+            String txtJsoup = this.fetchWholeBodyText();
+
+            PageKeywordPositions keywordsPositions = null;
+
+            if (
+                    (doc.select("article").size() > 0 || doc.select("section").size() > 0) &&
+                            ((double) txtBoilerpipe.length() / (double) txtJsoup.length() * 100.0) > 10.0) {
+                // use boilerpipe
+                keywordsPositions = ProcessKeywords.fromTextualWithPosition(txtBoilerpipe);
+            } else {
+                // use jsoup
+                keywordsPositions = ProcessKeywords.fromTextualWithPosition(txtJsoup);
+            }
+
+            pk.put("Text", keywordsPositions);
+        }
+
+        return pk;
     }
 
-    public String countRanking() {
-        String searchKeyword = this.generateKeywords();
+    // TODO: return Set<Keyword>?
+    public Set<Keyword> countRankingsForKeywords() {
+        HashSet<Keyword> keywords = new HashSet<>();
 
+        PageKeywords pageKeywords = generateKeywords();
+        HashMap<String, KeywordUrlSourcePositions> kusp = pageKeywords.convertToKeywordSourcePositions();
+        for (String kw : pageKeywords.getAllKeywords()) {
+            int score = _countScore(kw);
+
+            Keyword keyword = new Keyword(kw);
+            KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
+            keywordUrl.addAll(kusp.values());
+            keyword.addKeywordUrl(keywordUrl);
+            keywords.add(keyword);
+        }
+
+        // TODO: store into keyword storage?
+    }
+
+    private int _countScore(String searchKeyword) {
         int score = 0;
-        Elements paragraphs = doc.select("p");
 
-        //if there are containing keyword in paragraphs add 3 score
-        for (Element p : paragraphs) {
-            if (p.toString().contains(searchKeyword)) {
-                score += 3;
+        //if there are containing keyword in paragraphs put 3 score
+        {
+            String[] paragraphs = fetchPText();
+            for (String p : paragraphs) {
+                if (p.contains(searchKeyword)) {
+                    score += 3;
+                }
             }
         }
 
-        //if the folder of the url containing keyword add 30 score
+        //if the folder of the url containing keyword put 30 score
         {
             String[] urlDirectories = this.getUrl().getFile().split("/");
             for (String dir : urlDirectories) {
@@ -197,20 +266,11 @@ public class Page {
             }
         }
 
-        //if the domain name and url containing keyword add 20 score
+        //if the domain name and url containing keyword put 20 score
         if (doc.baseUri().substring(doc.baseUri().indexOf("/") + 1).contains(searchKeyword)) {
             score += 20;
         }
-        if (score > 80) {
-            return "A";
-        } else if (score >= 70) {
-            return "B";
-        } else if (score >= 60) {
-            return "C";
-        } else if (score >= 40) {
-            return "D";
-        } else if (score >= 20) {
-            return "E";
-        } else return "F";
+
+        return score;
     }
 }

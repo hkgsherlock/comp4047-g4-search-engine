@@ -26,6 +26,7 @@ public class testBoilerpipe {
         doParseTest("http://time.com/4548320/j-k-rowling-seattle-seahawks-richard-sherman/");
         doParseTest("https://hk.news.yahoo.com/");
         doParseTest("https://hk.news.yahoo.com/%E9%A0%98%E5%B1%95%E6%A8%99%E5%94%AE5%E5%95%86%E5%A0%B4-%E4%BC%B0%E5%80%BC27%E5%84%84-223108942.html");
+        doParseTest("http://headlines.yahoo.co.jp/hl?a=20161029-00000002-jct-soci");
         doParseTest("http://yipeipei.github.io/comp4047/");
         doParseTest("http://stackoverflow.com");
         doParseTest("http://monkeycoding.com/?tag=contourarea");
@@ -51,17 +52,17 @@ public class testBoilerpipe {
         TextDocument doc2 = in.getTextDocument();
         String txtBoilerpipe = ArticleExtractor.INSTANCE.getText(doc2);
 
-//        System.out.println("Jsoup:");
-//        System.out.println(txtJsoup);
-//
-//        System.out.println();
-//        System.out.println();
-//
-//        System.out.println("Boilerpipe:");
-//        System.out.println(txtBoilerpipe);
-//        System.out.println();
-//
-//        System.out.println();
+        System.out.println("Jsoup:");
+        System.out.println(txtJsoup);
+
+        System.out.println();
+        System.out.println();
+
+        System.out.println("Boilerpipe:");
+        System.out.println(txtBoilerpipe);
+        System.out.println();
+
+        System.out.println();
         // reduce ranking if page load time is large
         System.out.println("time load page: " + elapsedTime + "ms");
 
@@ -73,6 +74,14 @@ public class testBoilerpipe {
 
         // if percentage is small like < 5%, consider more using all text
         System.out.println("percentage of likeliness: " + ((double)txtBoilerpipe.length() / (double)txtJsoup.length() * 100.0) + "%");
+
+        if (
+                (doc.select("article").size() > 0 || doc.select("section").size() > 0) &&
+                        ((double)txtBoilerpipe.length() / (double)txtJsoup.length() * 100.0) > 10.0) {
+            System.out.println("use boilerpipe");
+        } else {
+            System.out.println("use jsoup");
+        }
 
         System.out.println();
         System.out.println("--------------------------------------------------");

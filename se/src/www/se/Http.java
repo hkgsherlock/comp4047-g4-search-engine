@@ -14,6 +14,7 @@ public class Http {
     /**
      * Retrieve html file of given url.
      */
+    @Deprecated
     public static String getTextual(URL url) throws IOException {
 //        StringBuilder sb = new StringBuilder();
         String s = "";
@@ -30,6 +31,10 @@ public class Http {
         }
 
         return s;
+    }
+
+    public static HttpResult get(URL url) throws IOException {
+        return get(url, DEFAULT_TIMEOUT);
     }
 
     public static HttpResult get(URL url, int timeout) throws IOException {

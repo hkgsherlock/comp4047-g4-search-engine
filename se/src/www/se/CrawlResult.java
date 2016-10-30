@@ -1,21 +1,21 @@
 package se;
 
+import com.sun.org.apache.xpath.internal.compiler.Keywords;
+
 import java.net.URL;
+import java.util.Set;
 
 public class CrawlResult {
     URL url;
-    String keyword;
-    String ranking;
+    Set<Keywords> keyword;
 
-    public CrawlResult(URL url, String keyword, String ranking) {
+    public CrawlResult(URL url, Set<Keywords> keyword) {
         this.url = url;
         this.keyword = keyword;
-        this.ranking = ranking;
     }
 
     public CrawlResult(Page page) {
         this.url = page.getUrl();
-        this.keyword = page.generateKeywords();
-        this.ranking = page.countRanking();
+        this.keyword = page.generateKeywords().getAllKeywords();
     }
 }

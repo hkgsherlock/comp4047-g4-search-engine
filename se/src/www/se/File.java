@@ -132,6 +132,16 @@ public class File {
         return new FileOutputStream(this.file);
     }
 
+    public boolean delete() {
+        return file.delete();
+    }
+
+    /*
+    public void setDeleteOnExit() {
+        file.deleteOnExit();
+    }
+    */
+
     /**
      * Test entry point for this particular single module
      */
