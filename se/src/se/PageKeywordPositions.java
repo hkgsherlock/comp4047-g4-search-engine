@@ -9,8 +9,10 @@ public class PageKeywordPositions {
     private HashMap<String, HashSet<Integer>> keywordPositions = new HashMap<>(); // keyword, positions
 
     public void add(String keyword, int position) {
-        if (keyword.length() < 3 || Pattern.matches("^\\d+\\.\\d+$", keyword))
+        if (keyword.length() < 3 || Pattern.matches("(^[\\d\\.]+$|^\\d|\\d$)", keyword))
             return;
+
+        keyword = keyword.toLowerCase();
 
         if (this.keywordPositions.containsKey(keyword)) {
             this.keywordPositions.get(keyword).add(position);
@@ -22,8 +24,10 @@ public class PageKeywordPositions {
     }
 
     public void addAll(String keyword, Set<Integer> positions) {
-        if (keyword.length() < 3 || Pattern.matches("^\\d+\\.\\d+$", keyword))
+        if (keyword.length() < 3 || Pattern.matches("(^[\\d\\.]+$|^\\d|\\d$)", keyword))
             return;
+
+        keyword = keyword.toLowerCase();
 
         if (this.keywordPositions.containsKey(keyword)) {
             this.keywordPositions.get(keyword).addAll(positions);
