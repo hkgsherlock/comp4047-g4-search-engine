@@ -39,6 +39,8 @@ public class Crawler {
             URL urlFirstPage = new URL(strUrlFrom);
 
             Page firstPage = this.getFirstPage(urlFirstPage);
+            crawlResults.put(new CrawlResult(firstPage));
+
             addToResultUrl(firstPage.fetchUrlsInAElementsFromDocument(recursionPagesLimit));
 
 //            System.out.println(crawlResults.resultString());
@@ -50,7 +52,7 @@ public class Crawler {
     }
 
     private void addToResultUrl(URL[] urls) throws IOException {
-        Set<URL> urlSet = new HashSet<>(Arrays.asList(urls)); // TODO: means noting
+        Set<URL> urlSet = new HashSet<>(Arrays.asList(urls));
 
         for (URL url : urlSet) {
             Page page = Page.getFromRemote(url);

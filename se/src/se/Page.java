@@ -154,7 +154,7 @@ public class Page {
         Elements p = doc.select("p");
         for (Element ep : p) {
             String text = ep.text();
-            if (text.length() > 0)
+            if (text.length() == 0)
                 continue;
             texts.add(text);
         }
@@ -248,10 +248,18 @@ public class Page {
     }
 
     private String getDescription(String keyword){
-        return doc.body().text(); //// TODO: 2016/10/31 find the keyword
+        Elements e=doc.body().select("P");
+        for(Element el:e){
+            if(el.text().indexOf(keyword)>0){
+                int lastPosition=el.text().length()-el.text().indexOf(keyword);
+                if(lastPosition<20)continue;
+                return el.text().substring(el.text().indexOf(keyword),lastPosition);
+            }
+        }
+        return doc.body().text().substring(0,20);
     }
 
-    private int _countScore(String searchKeyword) { // TODO: redo? all results as 0?
+    private int _countScore(String searchKeyword) {
         int score = 0;
 
         //if there are containing keyword in paragraphs put 3 score
