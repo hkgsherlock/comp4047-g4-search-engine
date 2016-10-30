@@ -52,6 +52,10 @@ public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
 
     @Override
     public String toString() {
-        return "{url=" + url + ", score=" + score + ", description=" + description + ", sources=" + sources.toString() + "}";
+        ArrayList<String> ret = new ArrayList<>();
+        for (KeywordUrlSourcePositions kusp : sources) {
+            ret.add(kusp.toString());
+        }
+        return "{url=" + url + ", score=" + score + ", description=" + description + ", sources=[" + String.join(", ", ret) + "]}";
     }
 }

@@ -3,6 +3,7 @@ package se;
 import com.sun.deploy.util.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -22,7 +23,11 @@ public class KeywordUrlSourcePositions implements Serializable {
 
     @Override
     public String toString() {
-        return "{" + "source=" + source + ", positions=[" + StringUtils.join(positions, ", ") + "]}";
+        ArrayList<String> ret = new ArrayList<>();
+        for (Integer v : positions) {
+            ret.add(v.toString());
+        }
+        return "{" + "source=" + source + ", positions=[" + StringUtils.join(ret, ", ") + "]}";
     }
 
     public void add(int value) {
