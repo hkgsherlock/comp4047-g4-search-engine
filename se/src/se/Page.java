@@ -238,7 +238,7 @@ public class Page {
             }
 
             KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
-            keywordUrl.addAll(kusp.values());
+            keywordUrl.add(kusp.get(kw));
             keyword.addKeywordUrl(keywordUrl);
             keywordUrl.description=getDescription(keyword.keyword);
         }
