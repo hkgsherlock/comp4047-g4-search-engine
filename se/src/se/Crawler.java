@@ -41,7 +41,7 @@ public class Crawler {
             Page firstPage = this.getFirstPage(urlFirstPage);
             addToResultUrl(firstPage.fetchUrlsInAElementsFromDocument(recursionPagesLimit));
 
-            System.out.println(crawlResults.resultString());
+//            System.out.println(crawlResults.resultString());
 
 
         } catch (IOException e) {
