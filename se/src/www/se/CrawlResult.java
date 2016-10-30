@@ -3,11 +3,12 @@ package se;
 import com.sun.org.apache.xpath.internal.compiler.Keywords;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Set;
 
 public class CrawlResult {
     URL url;
-    Set<Keyword> keyword;
+    Collection<Keyword> keyword;
 
     public CrawlResult(URL url, Set<Keyword> keyword) {
         this.url = url;

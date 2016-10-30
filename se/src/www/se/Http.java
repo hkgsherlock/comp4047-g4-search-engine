@@ -20,7 +20,6 @@ public class Http {
         String s = "";
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(DEFAULT_TIMEOUT);
-        // TODO: seperate to different parts, check if contenttype is text/*
         // throws exception if binary code
         InputStream is = conn.getInputStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(is));

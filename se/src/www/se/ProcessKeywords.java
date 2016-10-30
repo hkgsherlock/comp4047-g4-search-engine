@@ -12,7 +12,7 @@ public class ProcessKeywords {
 
         // https://www.regex101.com/r/ncxqj1/1
         /*
-        // TODO: describe each part of regex?
+        // TODO: describe each part of regex? -- charles
          */
         String regexPattern = "(\\d+\\.\\d+|[a-zA-Z0-9\\u4E00-\\u9fa5\\uE7C7-\\uE7F3])+";
         Pattern pattern = Pattern.compile(regexPattern, Pattern.MULTILINE);

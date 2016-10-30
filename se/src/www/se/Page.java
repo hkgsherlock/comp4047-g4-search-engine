@@ -158,7 +158,8 @@ public class Page {
                 continue;
             texts.add(text);
         }
-        return (String[]) texts.toArray();
+//        return (String[]) texts.toArray();\
+        return texts.toArray(new String[texts.size()]);
     }
 
     private String fetchPageTitle() {
@@ -228,8 +229,8 @@ public class Page {
         for (String kw : pageKeywords.getAllKeywords()) {
             int score = _countScore(kw);
 
-            Keyword keyword;
-            if (!keywords.containsKey(kw)) {
+            Keyword keyword = null;
+            if (keywords.containsKey(kw)) {
                 keyword = keywords.get(kw);
             } else {
                 keyword = new Keyword(kw);

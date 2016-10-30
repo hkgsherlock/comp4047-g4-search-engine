@@ -1,6 +1,8 @@
 package se;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +18,15 @@ public class KeywordsStorage {
         this.keywords = new HashMap<>();
         this._removedYetDeleted = new HashSet<>();
 
-        for (final java.io.File fileEntry : Paths.get(System.getProperty("user.dir"), "keywords").toFile().listFiles()) {
+        String startDir = System.getProperty("user.dir");
+        java.io.File keywordsDir = Paths.get(startDir, "keywords").toFile();
+        if (!keywordsDir.exists())
+            try {
+                Files.createDirectory(keywordsDir.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        for (final java.io.File fileEntry : keywordsDir.listFiles()) {
             try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
                 put((Keyword) ois.readObject());
             } catch (FileNotFoundException fe) {
@@ -42,6 +52,7 @@ public class KeywordsStorage {
         _removedYetDeleted.clear();
     }
 
+    // TODO: debug : File not found exception -- charles
     public void put(Keyword keyword) {
         if (keywords.containsKey(keyword.keyword)) {
             this.keywords.get(keyword.keyword).addKeywordUrls(keyword.getAll());

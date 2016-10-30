@@ -1,9 +1,10 @@
 package se;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class KeywordUrlSourcePositions {
+public class KeywordUrlSourcePositions implements Serializable {
     String source;
     HashSet<Integer> positions;
 

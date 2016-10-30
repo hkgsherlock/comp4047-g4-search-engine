@@ -29,3 +29,5 @@ hs_err_pid*
 /se/.idea
 /se/tmp
 /se/fetched
+/se/tmp
+/se/keywords

@@ -42,6 +42,8 @@ public class Crawler {
             addToResultUrl(firstPage.fetchUrlsInAElementsFromDocument(recursionPagesLimit));
 
             System.out.println(crawlResults.resultString());
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
