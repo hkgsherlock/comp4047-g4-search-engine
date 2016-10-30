@@ -17,6 +17,9 @@ public class SearchServer {
         System.out.print("testing");
         Crawler crawler = new Crawler("http://hkbu.edu.hk/eng/main/index/jsp", 100, 10);
         crawler.start();
-        KeywordsStorage.INSTANCE.get(args[0]); // TODO: tostring -- leo
+        Keyword keyword = KeywordsStorage.INSTANCE.get("About");
+        if (keyword != null) {
+            System.out.println(keyword.print());
+        }
     }
 }
