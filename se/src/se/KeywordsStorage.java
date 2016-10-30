@@ -25,7 +25,7 @@ public class KeywordsStorage {
             }
         for (final java.io.File fileEntry : keywordFolder.listFiles()) {
             try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
-                put((Keyword) ois.readObject()); // TODO: 2016/10/31 ClassNotFoundExceprion
+                put((Keyword) ois.readObject());
             } catch (FileNotFoundException fe) {
             } catch (IOException e) {
                 e.printStackTrace();
@@ -54,7 +54,6 @@ public class KeywordsStorage {
         _removedYetDeleted.clear();
     }
 
-    // TODO: debug : File not found exception -- charles
     public void put(Keyword keyword) {
         if (keywords.containsKey(keyword.keyword)) {
             this.keywords.get(keyword.keyword).addKeywordUrls(keyword.getAll());
