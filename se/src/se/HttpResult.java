@@ -3,6 +3,9 @@ package se;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+/**
+ * Represents the response retrieved from a HTTPURLConnection, invoked by Http class.
+ */
 public class HttpResult extends File {
     private long timeConnect;
     private HttpURLConnection httpConnection;

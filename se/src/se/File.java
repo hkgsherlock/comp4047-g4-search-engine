@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * Demonstrate basic file operations.
+ * Represents a file. Wrapping java.io.File for better suit this project's needs.
  */
 public class File {
     private static final boolean DEFAULT_WRITABLE = false;

@@ -7,6 +7,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * To store, cache and read the keywords stored in the server.
+ */
 public class KeywordsStorage {
     public static final KeywordsStorage INSTANCE = new KeywordsStorage();
 

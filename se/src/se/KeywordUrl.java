@@ -3,6 +3,10 @@ package se;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Represents a URL, its score in case of a keyword, and the description to represent the keyword in the website.
+ * Also stores sources (where keywords exists? Meta Description or context) and positions.
+ */
 public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
     LinkedList<KeywordUrlSourcePositions> sources = new LinkedList<>();
     String url;

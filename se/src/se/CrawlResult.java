@@ -6,6 +6,9 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Represents a particular crawling result from a URL.
+ */
 public class CrawlResult {
     URL url;
     Collection<Keyword> keyword;

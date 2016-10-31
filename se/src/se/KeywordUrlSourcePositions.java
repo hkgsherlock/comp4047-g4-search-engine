@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * Storing places where the keywords exists in a page, and its positions.
+ */
 public class KeywordUrlSourcePositions implements Serializable {
     String source;
     HashSet<Integer> positions;

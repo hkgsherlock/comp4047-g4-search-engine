@@ -3,6 +3,9 @@ package se;
 import java.net.URL;
 import java.util.LinkedList;
 
+/**
+ * Storing crawling results from different websites. Contains many of CrawlResult objects.
+ */
 public class CrawlResults {
     public LinkedList<CrawlResult> results;
 
