@@ -74,11 +74,11 @@ public class testBoilerpipe {
         System.out.println("has section tag? " + (doc.select("section").size() > 0 ? "YES" : "noooooooooooo"));
 
         // if percentage is small like < 5%, consider more using all text
-        System.out.println("percentage of likeliness: " + ((double)txtBoilerpipe.length() / (double)txtJsoup.length() * 100.0) + "%");
+        System.out.println("percentage of likeliness: " + ((double) txtBoilerpipe.length() / (double) txtJsoup.length() * 100.0) + "%");
 
         if (
                 (doc.select("article").size() > 0 || doc.select("section").size() > 0) &&
-                        ((double)txtBoilerpipe.length() / (double)txtJsoup.length() * 100.0) > 10.0) {
+                        ((double) txtBoilerpipe.length() / (double) txtJsoup.length() * 100.0) > 10.0) {
             System.out.println("use boilerpipe");
         } else {
             System.out.println("use jsoup");

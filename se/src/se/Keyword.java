@@ -38,11 +38,11 @@ public class Keyword implements Serializable {
         return obj.getClass() == this.getClass() && this.keyword.equals(((Keyword) obj).keyword);
     }
 
-    public void print(){
-        int count=0;
-        for(KeywordUrl k: keywordUrls){
+    public void print() {
+        int count = 0;
+        for (KeywordUrl k : keywordUrls) {
             count++;
-            System.out.println("<p>"+count+" :"+k.url+"\n"+k.description+"</p>");
+            System.out.println("<p>" + count + " :" + k.url + "\n" + k.description + "</p>");
         }
 
     }

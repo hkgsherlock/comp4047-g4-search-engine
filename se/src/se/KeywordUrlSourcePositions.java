@@ -21,7 +21,7 @@ public class KeywordUrlSourcePositions implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return obj.getClass() == this.getClass() && this.source.equals(((KeywordUrlSourcePositions)obj).source);
+        return obj.getClass() == this.getClass() && this.source.equals(((KeywordUrlSourcePositions) obj).source);
     }
 
     @Override
