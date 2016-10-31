@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xml.sax.InputSource;
 import se.Http;
+import se.Page;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class testBoilerpipe {
         URL url = new URL(urlString);
 
         long start = System.currentTimeMillis();
-        String html = Http.getTextual(url);
+        String html = Page.getFromRemote(url).getHtml();
         long elapsedTime = System.currentTimeMillis() - start;
 
         Document doc = Jsoup.parse(html);
