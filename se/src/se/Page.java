@@ -221,7 +221,7 @@ public class Page {
         return pk;
     }
 
-    public Collection<Keyword> generateKeywordsAndCountScore(){
+    public Collection<Keyword> generateKeywordsAndCountScore() {
         HashMap<String, Keyword> keywords = new HashMap<>();
 
         PageKeywords pageKeywords = generateKeywords();
@@ -240,23 +240,26 @@ public class Page {
             KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
             keywordUrl.add(kusp.get(kw));
             keyword.addKeywordUrl(keywordUrl);
-            keywordUrl.description=getDescription(keyword.keyword);
+            keywordUrl.description = getDescription(keyword.keyword);
         }
 
         KeywordsStorage.INSTANCE.putAll(keywords.values());
         return keywords.values();
     }
 
-    private String getDescription(String keyword){
-        Elements e=doc.body().select("P");
-        for(Element el:e){
-            if(el.text().indexOf(keyword)>0){
-                int lastPosition=el.text().length()-el.text().indexOf(keyword);
-                if(lastPosition<20)continue;
-                return el.text().substring(el.text().indexOf(keyword),lastPosition);
+    private String getDescription(String keyword) {
+        Elements e = doc.body().select("P");
+        for (Element el : e) {
+            int idxS = el.text().indexOf(keyword);
+
+            if (idxS > 0) {
+                int idxE = el.text().length();
+                int len = idxE - idxS;
+                if (len < 20) continue;
+                return el.text().substring(idxS, idxE);
             }
         }
-        return doc.body().text().substring(0,20);
+        return doc.body().text().substring(0, Math.min(20, doc.body().text().length()));
     }
 
     private int _countScore(String searchKeyword) {
