@@ -42,7 +42,7 @@ public class Keyword implements Serializable {
         int count=0;
         for(KeywordUrl k: keywordUrls){
             count++;
-            System.out.println(""+count+" :"+k.url+"\n"+k.description);
+            System.out.println("<p>"+count+" :"+k.url+"\n"+k.description+"</p>");
         }
 
     }
