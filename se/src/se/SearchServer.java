@@ -18,6 +18,11 @@ public class SearchServer {
         System.out.println("Received query: " + Arrays.toString(args));
         Crawler crawler = new Crawler("http://hkbu.edu.hk/eng/main/index.jsp", 100, 10);
         crawler.start();
+        if (args.length == 0 || args[0].length() == 0){
+            System.out.println("No user inputs!");
+            return;
+        }
+
         Keyword kw = KeywordsStorage.INSTANCE.get(args[0]);
         if (kw != null)
             kw.print();
