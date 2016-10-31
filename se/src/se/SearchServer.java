@@ -31,7 +31,5 @@ public class SearchServer {
             kw.printHtml();
 
         System.out.println("<hr style=\"width: 100%\" />");
-
-
     }
 }
