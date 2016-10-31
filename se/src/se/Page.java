@@ -18,6 +18,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static javax.management.Query.attr;
+
 public class Page {
     private static final int DEFAULT_TIMEOUT = 30000;
 
@@ -60,6 +62,10 @@ public class Page {
 
     public URL getUrl() {
         return this.httpResult.getHttpConnection().getURL();
+    }
+
+    public String getTitle() {
+        return doc.title();
     }
 
     public long getTimeConnect() {
@@ -146,7 +152,10 @@ public class Page {
     }
 
     private String fetchMetaDescription() {
-        return this.doc.select("meta[description]").attr("content");
+        Elements metaDesc = this.doc.select("meta[description]");
+        if (metaDesc.size() == 0)
+            return "";
+        return metaDesc.attr("content");
     }
 
     private String[] fetchPText() {
@@ -237,7 +246,7 @@ public class Page {
                 keywords.put(kw, keyword);
             }
 
-            KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), score);
+            KeywordUrl keywordUrl = new KeywordUrl(getUrl().toString(), getTitle(), score);
             keywordUrl.add(kusp.get(kw));
             keyword.addKeywordUrl(keywordUrl);
             keywordUrl.description = getDescription(keyword.keyword);
@@ -248,18 +257,42 @@ public class Page {
     }
 
     private String getDescription(String keyword) {
-        Elements e = doc.body().select("P");
-        for (Element el : e) {
-            int idxS = el.text().indexOf(keyword);
+        // just display page meta description if exist
+        String metaDesc = fetchMetaDescription();
+        if (metaDesc.length() > 0)
+            return metaDesc;
 
-            if (idxS > 0) {
-                int idxE = el.text().length();
-                int len = idxE - idxS;
-                if (len < 20) continue;
-                return el.text().substring(idxS, idxE);
-            }
+        int descMinLength = 20;
+
+        {
+            String descJsoup = _getDescription(keyword, String.join(" ", fetchPText()), descMinLength);
+            if (descJsoup != null)
+                return descJsoup;
         }
-        return doc.body().text().substring(0, Math.min(20, doc.body().text().length()));
+
+        /*
+        try {
+            String descBoilerpipe = _getDescription(keyword, fetchTextDocumentWithBoilerpipe().replace("\n", " "), descMinLength);
+            if (descBoilerpipe != null)
+                return descBoilerpipe;
+        } catch (SAXException | BoilerpipeProcessingException ignored) {
+        }
+        */
+
+        return "";
+    }
+
+    private String _getDescription(String keyword, String context, int minimumLength) {
+        int idxS = context.toLowerCase().indexOf(keyword);
+
+        if (idxS > 0) {
+            int idxE = context.length();
+            int len = idxE - idxS;
+            if (len < minimumLength) return null;
+            return context.substring(idxS, idxE);
+        }
+
+        return null;
     }
 
     private int _countScore(String searchKeyword) {

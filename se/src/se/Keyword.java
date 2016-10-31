@@ -38,13 +38,21 @@ public class Keyword implements Serializable {
         return obj.getClass() == this.getClass() && this.keyword.equals(((Keyword) obj).keyword);
     }
 
-    public void print() {
-        int count = 0;
-        for (KeywordUrl k : keywordUrls) {
-            count++;
-            System.out.println("<p>" + count + " :" + k.url + "\n" + k.description + "</p>");
-        }
+    public void printHtml(){
+        try {
+            PrintStream printer = new PrintStream(System.out, true, "UTF-8");
 
+            printer.println("<ol>");
+            for (KeywordUrl k : keywordUrls) {
+                printer.println("<li data-score=\"" + k.score + "\">");
+                printer.println("<a href=\"" + k.url + "\">" + k.title + "</a><br/>");
+                printer.println(k.url + "<br/>");
+                printer.println(k.description);
+                printer.println("</li>");
+            }
+            printer.println("</ol>");
+        } catch (UnsupportedEncodingException e) {
+        }
     }
 
     @Override

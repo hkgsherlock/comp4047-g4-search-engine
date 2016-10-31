@@ -104,7 +104,7 @@ public class File {
     }
 
     /**
-     * Read line by line from a file and print to console.
+     * Read line by line from a file and printHtml to console.
      */
     public String readTexts() throws IOException {
         List<String> strings = this.readLinesListString();

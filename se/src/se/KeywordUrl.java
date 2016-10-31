@@ -10,15 +10,14 @@ import java.util.*;
 public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
     LinkedList<KeywordUrlSourcePositions> sources = new LinkedList<>();
     String url;
+    String title;
+    Page page = null;
     int score;
     String description;
 
-    public KeywordUrl(String url) {
-        this(url, 0);
-    }
-
-    public KeywordUrl(String url, int score) {
+    public KeywordUrl(String url, String title, int score) {
         this.url = url;
+        this.title = title;
         this.score = score;
         this.sources = new LinkedList<>();
     }
