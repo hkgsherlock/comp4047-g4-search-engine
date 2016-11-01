@@ -58,4 +58,37 @@ public class PageKeywordPositions {
     public Set<String> getKeywords() {
         return keywordPositions.keySet();
     }
+
+    public int filter(Iterable<String> keywords) {
+        int removed = 0;
+        for (String kw : keywords) {
+            this.remove(kw);
+            removed++;
+        }
+        return removed;
+    }
+
+    public int filter(String[] keywords) {
+        int removed = 0;
+        for (String kw : keywords) {
+            this.remove(kw);
+            removed++;
+        }
+        return removed;
+    }
+
+    public int filterRegex(String regex) {
+        int removed = 0;
+        for (String kw : keywordPositions.keySet()) {
+            if (Pattern.matches(regex, kw)) {
+                remove(kw);
+                removed++;
+            }
+        }
+        return removed;
+    }
+
+    public void remove(String keyword) {
+        this.keywordPositions.remove(keyword);
+    }
 }
