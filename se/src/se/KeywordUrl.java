@@ -11,7 +11,6 @@ public class KeywordUrl implements Serializable, Comparable<KeywordUrl> {
     LinkedList<KeywordUrlSourcePositions> sources = new LinkedList<>();
     String url;
     String title;
-    Page page = null;
     int score;
     String description;
 
