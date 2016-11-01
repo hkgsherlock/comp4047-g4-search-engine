@@ -27,14 +27,21 @@ public class KeywordsStorage {
                 e.printStackTrace();
             }
         for (final java.io.File fileEntry : keywordFolder.listFiles()) {
+            boolean delete = false;
+
             try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileEntry)))) {
                 put((Keyword) ois.readObject());
-            } catch (FileNotFoundException fe) {
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (InvalidClassException ice) { // class version incompatible
+                delete = true;
+            } catch (FileNotFoundException ignored) {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            if (delete)
+                fileEntry.delete();
         }
     }
 
